@@ -11,6 +11,10 @@
   "author": "onlybakam",
   "license": "ISC",
   "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/onlybakam/ob-appsync-events-request.git"
+  },
   "devDependencies": {
     "@tsconfig/node20": "^20.1.4",
     "esbuild": "^0.25.1",
