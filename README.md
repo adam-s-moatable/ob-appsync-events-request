@@ -21,15 +21,15 @@ npm install ob-appsync-events-request
 ## Usage
 
 ```typescript
-import { PublishRequest } from 'ob-appsync-events-request';
+import { PublishRequest } from "ob-appsync-events-request";
 
 // Create a signed request
 const request = await PublishRequest.signed(
   {
-    channel: 'your-channel-name',
-    events: [{ message: 'Hello, world!' }]
+    channel: "/your-channel-name/messages",
+    events: [{ message: "Hello, world!" }],
   },
-  'your-appsync-domain.appsync-api.region.amazonaws.com'
+  "your-appsync-domain.appsync-api.region.amazonaws.com",
 );
 
 // Send the request using fetch
@@ -43,13 +43,13 @@ console.log(result);
 ```typescript
 const request = await PublishRequest.signed(
   {
-    channel: 'your-channel-name',
-    events: [{ message: 'Hello, world!' }]
+    channel: "/your-channel-name/messages",
+    events: [{ message: "Hello, world!" }],
   },
   {
-    httpDomain: 'your-custom-domain.com',
-    region: 'us-east-1' // Region is required for custom domains
-  }
+    httpDomain: "your-custom-domain.com",
+    region: "us-east-1", // Region is required for custom domains
+  },
 );
 ```
 
@@ -60,3 +60,4 @@ For more information on AppSync Events, refer to the [AWS AppSync Events API doc
 ## License
 
 ISC
+
