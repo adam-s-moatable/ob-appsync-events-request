@@ -11,6 +11,11 @@
   "author": "onlybakam",
   "license": "ISC",
   "description": "",
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/onlybakam/ob-appsync-events-request.git"
