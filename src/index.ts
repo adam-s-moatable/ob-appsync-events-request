@@ -3,41 +3,47 @@ import { fromNodeProviderChain } from '@aws-sdk/credential-providers'
 import { HttpRequest } from '@smithy/protocol-http'
 import { SignatureV4 } from '@smithy/signature-v4'
 
-/** The AppSync Events WebSocket sub-protocol */
+/** AppSync Events WebSocket sub-protocol identifier */
 export const AWS_APPSYNC_EVENTS_SUBPROTOCOL = 'aws-appsync-event-ws'
 
-/** The default headers to be signed for an HTTP request */
+/** Default headers required for AppSync Events API requests */
 export const DEFAULT_HEADERS = {
   accept: 'application/json, text/javascript',
   'content-encoding': 'amz-1.0',
   'content-type': 'application/json; charset=UTF-8',
 }
 
-/** Interface for an AppSync Events Publish Request input */
+/**
+ * Configuration interface for AppSync Events Publish requests.
+ * Extends the standard RequestInit but omits the body property.
+ */
 interface PublishRequestInit extends Omit<RequestInit, 'body'> {
-  /** A HTTP domain for an AppSync Events API. */
+  /** HTTP domain for AppSync Events API */
   httpDomain: string
-  /** A region for the AppSync Events API. Required if using IAM auth with a custom domain. */
+  /** AWS region (required with IAM auth on custom domains) */
   region?: string
 }
 
 /**
- * A Request object to publish events to an AppSync Events API using the Fetch API.
+ * A specialized Request class for publishing events to AWS AppSync Events APIs.
+ * Extends the standard Fetch API Request object with AppSync-specific functionality.
  */
 export class PublishRequest<T = any> extends Request {
+  /** HTTP method for all publish requests */
   public readonly method = 'POST'
 
   /**
    * Creates a signed PublishRequest using the environment's AWS credentials.
-   * @param request - The channel and list (up to 5) of events to publish.
-   * @param input -the AppSync Events HTTP domain or request object containting the HTTP domain and additional configuration options.
-   * @returns A signed request.
+   * Signs the request with AWS Signature V4 for IAM authentication.
+   * 
+   * @param input - AppSync Events HTTP domain or request configuration object
+   * @param channel - Channel name to publish events to
+   * @param events - List of events (1-5) to publish in a batch
+   * @returns A signed request ready to be sent
    */
   static async signed<K = any>(
     input: string | PublishRequestInit,
-    /** A channel to publish to. */
     channel: string,
-    /** A list of events (up to 5) to publish in a batch. */
     ...events: K[]
   ) {
     if (events.length === 0 || events.length > 5) {
@@ -101,10 +107,23 @@ export class PublishRequest<T = any> extends Request {
     )
   }
 
+  /**
+   * Private constructor for creating PublishRequest instances.
+   * Use the static signed() method to create instances.
+   * 
+   * @param input - Request URL
+   * @param init - Request initialization options
+   * @param channel - Target channel name
+   * @param events - Array of events to publish
+   */
   private constructor(
+    /** Original request URL */
     public readonly input: string,
+    /** Request initialization options */
     public readonly init: RequestInit,
+    /** Target channel name */
     public readonly channel: string,
+    /** Array of events to publish */
     public readonly events: T[],
   ) {
     super(input, init)
