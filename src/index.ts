@@ -20,10 +20,10 @@ interface PublishRequestInit extends Omit<RequestInit, 'body'> {
   /** A region for the AppSync Events API. Required if using IAM auth with a custom domain. */
   region?: string
 }
+
 /**
  * A Request object to publish events to an AppSync Events API using the Fetch API.
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class PublishRequest<T = any> extends Request {
   public readonly method = 'POST'
 
@@ -33,17 +33,14 @@ export class PublishRequest<T = any> extends Request {
    * @param input -the AppSync Events HTTP domain or request object containting the HTTP domain and additional configuration options.
    * @returns A signed request.
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static async signed<K = any>(
-    request: {
-      /** A channel to publish to. */
-      channel: string
-      /** A list of events (up to 5) to publish in a batch. */
-      events: K[]
-    },
     input: string | PublishRequestInit,
+    /** A channel to publish to. */
+    channel: string,
+    /** A list of events (up to 5) to publish in a batch. */
+    ...events: K[]
   ) {
-    if (request.events.length === 0 || request.events.length > 5) {
+    if (events.length === 0 || events.length > 5) {
       throw new Error('The number of events to publish must be between 1 and 5')
     }
     const credentials = fromNodeProviderChain()
@@ -84,8 +81,8 @@ export class PublishRequest<T = any> extends Request {
       headers: { ...DEFAULT_HEADERS, host: url.hostname },
       body: JSON.stringify({
         id: crypto.randomUUID(),
-        channel: request.channel,
-        events: request.events.map((e) => JSON.stringify(e)),
+        channel,
+        events: events.map((e) => JSON.stringify(e)),
       }),
       hostname: url.hostname,
       path: url.pathname,
@@ -99,8 +96,8 @@ export class PublishRequest<T = any> extends Request {
         ...signedReq,
         headers: { ...restHeaders, ...signedReq.headers },
       },
-      request.channel,
-      [...request.events],
+      channel,
+      [...events],
     )
   }
 

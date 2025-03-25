@@ -2,8 +2,16 @@
   "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "outDir": "dist",
-    "lib": ["dom"],
+    "lib": [
+      "es2023",
+      "dom"
+    ],
     "declaration": true
   },
-  "exclude": ["node_modules", "dist", ".eslintrc.js", "scripts"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".eslintrc.js",
+    "scripts"
+  ]
 }
