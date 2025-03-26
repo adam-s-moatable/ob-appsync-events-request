@@ -18,8 +18,7 @@ export const DEFAULT_HEADERS = {
  * Extends the standard RequestInit but omits the body property.
  */
 interface PublishRequestInit extends Omit<RequestInit, 'body'> {
-  /** HTTP domain for AppSync Events API */
-  httpDomain: string
+  input?: string
   /** AWS region (required with IAM auth on custom domains) */
   region?: string
 }
@@ -35,8 +34,8 @@ export class PublishRequest<T = any> extends Request {
   /**
    * Creates a signed PublishRequest using the environment's AWS credentials.
    * Signs the request with AWS Signature V4 for IAM authentication.
-   * 
-   * @param input - AppSync Events HTTP domain or request configuration object
+   *
+   * @param input - AppSync Events HTTP address or request configuration object
    * @param channel - Channel name to publish events to
    * @param events - List of events (1-5) to publish in a batch
    * @returns A signed request ready to be sent
@@ -54,19 +53,21 @@ export class PublishRequest<T = any> extends Request {
     let url: URL
     let region: string | undefined
     let restInput: RequestInit
-    let restHeaders: HeadersInit | undefined
+    let restHeaders: RequestInit['headers'] | undefined
 
     if (typeof input === 'string') {
-      url = new URL(`https://${input}/event`)
+      url = new URL(input)
       region = undefined
       restInput = {}
       restHeaders = {}
-    } else {
-      url = new URL(`https://${input.httpDomain}/event`)
+    } else if (input?.input) {
+      url = new URL(input.input)
       region = input.region
-      const { httpDomain, headers: _headers, region: _region, ...rest } = input
+      const { input: _, headers: _headers, region: _region, ...rest } = input
       restInput = rest
       restHeaders = _headers
+    } else {
+      throw new Error('No input or url provided')
     }
 
     const match = url.hostname.match(/\w+\.appsync-api\.([\w-]+)\.amazonaws\.com/)
@@ -110,7 +111,7 @@ export class PublishRequest<T = any> extends Request {
   /**
    * Private constructor for creating PublishRequest instances.
    * Use the static signed() method to create instances.
-   * 
+   *
    * @param input - Request URL
    * @param init - Request initialization options
    * @param channel - Target channel name
