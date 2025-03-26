@@ -25,11 +25,9 @@ import { PublishRequest } from "ob-appsync-events-request";
 
 // Create a signed request
 const request = await PublishRequest.signed(
-  {
-    channel: "/your-channel-name/messages",
-    events: [{ message: "Hello, world!" }],
-  },
   "your-appsync-domain.appsync-api.region.amazonaws.com",
+  "/your-channel-name/messages",
+  { message: "Hello, world!" }
 );
 
 // Send the request using fetch
@@ -43,14 +41,26 @@ console.log(result);
 ```typescript
 const request = await PublishRequest.signed(
   {
-    channel: "/your-channel-name/messages",
-    events: [{ message: "Hello, world!" }],
-  },
-  {
     httpDomain: "your-custom-domain.com",
     region: "us-east-1", // Region is required for custom domains
   },
+  "/your-channel-name/messages",
+  { message: "Hello, world!" }
 );
+```
+
+## Testing
+
+The library includes a comprehensive test suite. To run the tests:
+
+```bash
+npm test
+```
+
+For development with continuous testing:
+
+```bash
+npm run test:watch
 ```
 
 ## Documentation
