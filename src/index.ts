@@ -35,7 +35,8 @@ export class PublishRequest<T = any> extends Request {
    * Creates a signed PublishRequest using the environment's AWS credentials.
    * Signs the request with AWS Signature V4 for IAM authentication.
    *
-   * @param input - AppSync Events HTTP address or request configuration object
+   * @param input - Full AppSync Events API URL (e.g., 'https://api-id.appsync-api.region.amazonaws.com/event')
+   *                or request configuration object with input URL
    * @param channel - Channel name to publish events to
    * @param events - List of events (1-5) to publish in a batch
    * @returns A signed request ready to be sent
@@ -61,9 +62,8 @@ export class PublishRequest<T = any> extends Request {
       restInput = {}
       restHeaders = {}
     } else if (input?.input) {
-      url = new URL(input.input)
-      region = input.region
-      const { input: _, headers: _headers, region: _region, ...rest } = input
+      const { input: _input, headers: _headers, region, ...rest } = input
+      url = new URL(_input)
       restInput = rest
       restHeaders = _headers
     } else {
