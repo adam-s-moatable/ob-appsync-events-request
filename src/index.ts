@@ -62,17 +62,18 @@ export class PublishRequest<T = any> extends Request {
       restInput = {}
       restHeaders = {}
     } else if (input?.input) {
-      const { input: _input, headers: _headers, region, ...rest } = input
+      const { input: _input, headers: _headers, region: _region, ...rest } = input
       url = new URL(_input)
-      restInput = rest
+      region = _region
       restHeaders = _headers
+      restInput = rest
     } else {
       throw new Error('No input or url provided')
     }
 
     const match = url.hostname.match(/\w+\.appsync-api\.([\w-]+)\.amazonaws\.com/)
     if (!region && !match) {
-      throw new Error('Region not provided')
+      throw new Error('Region not provided and not found in input url')
     }
 
     region = region ?? (match?.[1] as string)

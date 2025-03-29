@@ -53,6 +53,12 @@ describe('PublishRequest', () => {
   })
 
   describe('signed()', () => {
+    test('should throw an error if not input is provided', async () => {
+      await expect(
+        PublishRequest.signed({ region: 'us-east-1' }, 'test-channel', 'hello'),
+      ).rejects.toThrow('No input or url provided')
+    })
+
     test('should throw an error when no events are provided', async () => {
       await expect(
         PublishRequest.signed('https://api.example.com/event', 'test-channel'),
@@ -70,7 +76,7 @@ describe('PublishRequest', () => {
         PublishRequest.signed({ input: 'https://custom-domain.com/event' }, 'test-channel', {
           data: 'test',
         }),
-      ).rejects.toThrow('Region not provided')
+      ).rejects.toThrow('Region not provided and not found in input url')
     })
 
     test('should create a signed request with a string domain input', async () => {
@@ -137,4 +143,3 @@ describe('PublishRequest', () => {
     })
   })
 })
-
