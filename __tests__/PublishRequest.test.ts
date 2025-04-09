@@ -31,11 +31,11 @@ describe('PublishRequest', () => {
   beforeEach(() => {
     jest.clearAllMocks()
 
-    // Setup mock credentials
-    ;(fromNodeProviderChain as jest.Mock).mockReturnValue({
-      accessKeyId: 'mock-access-key',
-      secretAccessKey: 'mock-secret-key',
-    })
+      // Setup mock credentials
+      ; (fromNodeProviderChain as jest.Mock).mockReturnValue({
+        accessKeyId: 'mock-access-key',
+        secretAccessKey: 'mock-secret-key',
+      })
   })
 
   describe('Constants', () => {
@@ -73,7 +73,7 @@ describe('PublishRequest', () => {
 
     test('should throw an error when region is not provided for a custom domain', async () => {
       await expect(
-        PublishRequest.signed({ input: 'https://custom-domain.com/event' }, 'test-channel', {
+        PublishRequest.signed({ url: 'https://custom-domain.com/event' }, 'test-channel', {
           data: 'test',
         }),
       ).rejects.toThrow('Region not provided and not found in input url')
@@ -110,7 +110,7 @@ describe('PublishRequest', () => {
 
     test('should create a signed request with a custom domain and region', async () => {
       const config = {
-        input: 'https://custom-api.example.com/event',
+        url: 'https://custom-api.example.com/event',
         region: 'eu-west-1',
       }
       const channel = 'test-channel'

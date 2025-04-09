@@ -4,5 +4,5 @@
     "outDir": "dist",
     "declaration": true
   },
-  "exclude": ["node_modules", "dist", ".eslintrc.js", "scripts"]
+  "exclude": ["node_modules", "dist", ".eslintrc.js", "scripts", "__tests__"]
 }

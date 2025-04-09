@@ -18,7 +18,8 @@ export const DEFAULT_HEADERS = {
  * Extends the standard RequestInit but omits the body property.
  */
 interface PublishRequestInit extends Omit<RequestInit, 'body'> {
-  input?: string
+  /** url for the request */
+  url?: string
   /** AWS region (required with IAM auth on custom domains) */
   region?: string
 }
@@ -61,8 +62,8 @@ export class PublishRequest<T = any> extends Request {
       region = undefined
       restInput = {}
       restHeaders = {}
-    } else if (input?.input) {
-      const { input: _input, headers: _headers, region: _region, ...rest } = input
+    } else if (input?.url) {
+      const { url: _input, headers: _headers, region: _region, ...rest } = input
       url = new URL(_input)
       region = _region
       restHeaders = _headers

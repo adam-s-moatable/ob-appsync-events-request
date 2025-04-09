@@ -17,6 +17,7 @@ npm install ob-appsync-events-request
 - Support for both standard AppSync domains and custom domains
 - Batching of up to 5 events in a single request
 - Designed for Node.js environments (AWS Lambda, EC2, etc.)
+- Improved error messages for easier troubleshooting
 
 ## Usage
 
@@ -25,8 +26,8 @@ import { PublishRequest } from "ob-appsync-events-request";
 
 // Create a signed request
 const request = await PublishRequest.signed(
-  "your-appsync-domain.appsync-api.region.amazonaws.com",
-  "/your-channel-name/messages",
+  "https://your-appsync-domain.appsync-api.region.amazonaws.com/event",
+  "/your/channel/path",
   { message: "Hello, world!" }
 );
 
@@ -41,13 +42,33 @@ console.log(result);
 ```typescript
 const request = await PublishRequest.signed(
   {
-    httpDomain: "your-custom-domain.com",
+    url: "https://your-custom-domain.com/event",
     region: "us-east-1", // Region is required for custom domains
   },
-  "/your-channel-name/messages",
+  "/your/channel/path",
   { message: "Hello, world!" }
 );
 ```
+
+### Batch publishing (up to 5 events)
+
+```typescript
+const request = await PublishRequest.signed(
+  "https://your-appsync-domain.appsync-api.region.amazonaws.com/event",
+  "/your/channel/path",
+  { messageId: 1, content: "First message" },
+  { messageId: 2, content: "Second message" },
+  { messageId: 3, content: "Third message" }
+);
+```
+
+## Error Handling
+
+The library provides clear error messages for common issues:
+
+- When no events or more than 5 events are provided: `The number of events to publish must be between 1 and 5`
+- When no input URL is provided: `No input or url provided`
+- When region is missing for custom domains: `Region not provided and not found in input url`
 
 ## Testing
 
